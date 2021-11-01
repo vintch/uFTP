@@ -160,7 +160,7 @@ int getSafePath(dynamicStringDataType *safePath, char *theDirectoryName, loginDa
     
     if (theDirectoryName[0] == '/')
     {
-        while (theDirectoryNamePointer[0] == '/')
+        while (theDirectoryNamePointer[1] == '/')
             theDirectoryNamePointer++;
 
         //printf("\nMemory data address 2nd call : %lld", memoryTable);
