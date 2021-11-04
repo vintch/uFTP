@@ -707,7 +707,7 @@ int parseCommandNlst(ftpDataType * data, int socketId)
 {
     int isSafePath = 0;
     char *theNameToNlist;
-    theNameToNlist = getFtpCommandArg("NLIST", data->clients[socketId].theCommandReceived, 1);
+    theNameToNlist = getFtpCommandArg("NLST", data->clients[socketId].theCommandReceived, 1);
     cleanDynamicStringDataType(&data->clients[socketId].nlistPath, 0, &data->clients[socketId].memoryTable);
 
    // printf("\nNLIST COMMAND ARG: %s", data->clients[socketId].workerData.ftpCommand.commandArgs.text);
