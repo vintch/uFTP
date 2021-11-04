@@ -189,7 +189,6 @@ struct clientData
     dynamicStringDataType fileToStor;
     dynamicStringDataType fileToRetr;
     dynamicStringDataType listPath;
-    dynamicStringDataType nlistPath;
     
     //User authentication
     loginDataType login;
