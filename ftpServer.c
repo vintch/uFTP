@@ -167,7 +167,14 @@ void *connectionWorkerHandle(void * socketId)
         //Wait for sockets
         if ((ftpData.clients[theSocketId].workerData.socketConnection = accept(ftpData.clients[theSocketId].workerData.passiveListeningSocket, 0, 0))!=-1)
         {
-            ftpData.clients[theSocketId].workerData.socketIsConnected = 1;
+            returnCode = socketPrintf(&ftpData, theSocketId, "s", "150 Accepted data connection\r\n");
+            if (returnCode <= 0)
+            {
+                ftpData.clients[theSocketId].closeTheClient = 1;
+                printf("\n Closing the client 7");
+                pthread_exit(NULL);
+            }
+
 			#ifdef OPENSSL_ENABLED
             if (ftpData.clients[theSocketId].dataChannelIsTls == 1)
             {
@@ -194,6 +201,8 @@ void *connectionWorkerHandle(void * socketId)
 				}
             }
 			#endif
+
+            ftpData.clients[theSocketId].workerData.socketIsConnected = 1;
         }
         else
         {
@@ -334,15 +343,6 @@ void *connectionWorkerHandle(void * socketId)
                 break;
             }
 
-            returnCode = socketPrintf(&ftpData, theSocketId, "s", "150 Accepted data connection\r\n");
-
-            if (returnCode <= 0)
-            {
-                ftpData.clients[theSocketId].closeTheClient = 1;
-                printf("\n Closing the client 7");
-                pthread_exit(NULL);
-            }
-
             while(1)
             {
 
@@ -424,14 +424,6 @@ void *connectionWorkerHandle(void * socketId)
               break;
           }
 
-          returnCode = socketPrintf(&ftpData, theSocketId, "s", "150 Accepted data connection\r\n");
-          if (returnCode <= 0)
-          {
-              ftpData.clients[theSocketId].closeTheClient = 1;
-              printf("\n Closing the client 8");
-              pthread_exit(NULL);
-          }
-
           //returnCode = writeListDataInfoToSocket(ftpData.clients[theSocketId].listPath.text, ftpData.clients[theSocketId].workerData.socketConnection, &theFiles, theCommandType);
           returnCode = writeListDataInfoToSocket(&ftpData, theSocketId, &theFiles, theCommandType, &ftpData.clients[theSocketId].workerData.memoryTable);
           if (returnCode <= 0)
@@ -455,13 +447,6 @@ void *connectionWorkerHandle(void * socketId)
                  compareStringCaseInsensitive(ftpData.clients[theSocketId].workerData.theCommandReceived, "RETR", strlen("RETR")) == 1)
         {
             long long int writenSize = 0, writeReturn = 0;
-            writeReturn = socketPrintf(&ftpData, theSocketId, "s", "150 Accepted data connection\r\n");
-            if (writeReturn <= 0)
-            {
-                ftpData.clients[theSocketId].closeTheClient = 1;
-                printf("\n Closing the client 11");
-                pthread_exit(NULL);
-            }
 
         	if ((checkUserFilePermissions(ftpData.clients[theSocketId].fileToRetr.text, ftpData.clients[theSocketId].login.ownerShip.uid, ftpData.clients[theSocketId].login.ownerShip.gid) & FILE_PERMISSION_R) != FILE_PERMISSION_R)
             {
@@ -492,7 +477,7 @@ void *connectionWorkerHandle(void * socketId)
               break;
             }
 
-            writeReturn = socketPrintf(&ftpData, theSocketId, "s", "226-File successfully transferred\r\n226 done\r\n");
+            writeReturn = socketPrintf(&ftpData, theSocketId, "s", "226 File successfully transferred\r\n");
 
             if (writeReturn <= 0)
             {
